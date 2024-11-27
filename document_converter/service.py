@@ -28,13 +28,17 @@ class DocumentConversionBase(ABC):
 
 
 class DoclingDocumentConversion(DocumentConversionBase):
-    def _setup_pipeline_options(self, extract_tables: bool, image_resolution_scale: int) -> PdfPipelineOptions:
+    def _setup_pipeline_options(self, extract_tables: bool, image_resolution_scale: int, do_ocr: bool = True) -> PdfPipelineOptions:
         pipeline_options = PdfPipelineOptions()
         pipeline_options.images_scale = image_resolution_scale
         pipeline_options.generate_page_images = False
         pipeline_options.generate_table_images = extract_tables
         pipeline_options.generate_picture_images = True
-        pipeline_options.ocr_options = EasyOcrOptions(lang=["fr", "de", "es", "en", "it", "pt"])
+
+        pipeline_options.do_ocr = do_ocr
+
+        if do_ocr:
+            pipeline_options.ocr_options = EasyOcrOptions(lang=["fr", "de", "es", "en", "it", "pt"])
 
         return pipeline_options
 
@@ -70,9 +74,10 @@ class DoclingDocumentConversion(DocumentConversionBase):
         document: Tuple[str, BytesIO],
         extract_tables: bool = False,
         image_resolution_scale: int = IMAGE_RESOLUTION_SCALE,
+        do_ocr: bool = True,
     ) -> ConversionResult:
         filename, file = document
-        pipeline_options = self._setup_pipeline_options(extract_tables, image_resolution_scale)
+        pipeline_options = self._setup_pipeline_options(extract_tables, image_resolution_scale, do_ocr)
         doc_converter = DocumentConverter(
             format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)}
         )
@@ -92,8 +97,9 @@ class DoclingDocumentConversion(DocumentConversionBase):
         documents: List[Tuple[str, BytesIO]],
         extract_tables: bool = False,
         image_resolution_scale: int = IMAGE_RESOLUTION_SCALE,
+        do_ocr: bool = True,
     ) -> List[ConversionResult]:
-        pipeline_options = self._setup_pipeline_options(extract_tables, image_resolution_scale)
+        pipeline_options = self._setup_pipeline_options(extract_tables, image_resolution_scale, do_ocr)
         doc_converter = DocumentConverter(
             format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)}
         )
