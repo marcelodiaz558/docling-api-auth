@@ -114,6 +114,7 @@ curl http://localhost:8080/docs
 2. Test Celery worker:
 ```bash
 curl -X POST "http://localhost:8080/documents/convert" \
+  -H "X-API-Key: your-secret-key" \
   -H "accept: application/json" \
   -H "Content-Type: multipart/form-data" \
   -F "document=@/path/to/test.pdf"
@@ -171,6 +172,7 @@ Convert a single document immediately:
 
 ```bash
 curl -X POST "http://localhost:8080/documents/convert" \
+  -H "X-API-Key: your-secret-key" \
   -H "accept: application/json" \
   -H "Content-Type: multipart/form-data" \
   -F "document=@/path/to/document.pdf" \
@@ -184,6 +186,7 @@ curl -X POST "http://localhost:8080/documents/convert" \
 
 ```bash
 curl -X POST "http://localhost:8080/conversion-jobs" \
+  -H "X-API-Key: your-secret-key" \
   -H "accept: application/json" \
   -H "Content-Type: multipart/form-data" \
   -F "document=@/path/to/document.pdf"
@@ -193,6 +196,7 @@ curl -X POST "http://localhost:8080/conversion-jobs" \
 
 ```bash
 curl -X GET "http://localhost:8080/conversion-jobs/{job_id}" \
+  -H "X-API-Key: your-secret-key" \
   -H "accept: application/json"
 ```
 
@@ -202,6 +206,7 @@ Convert multiple documents asynchronously:
 
 ```bash
 curl -X POST "http://localhost:8080/batch-conversion-jobs" \
+  -H "X-API-Key: your-secret-key" \
   -H "accept: application/json" \
   -H "Content-Type: multipart/form-data" \
   -F "documents=@/path/to/document1.pdf" \
