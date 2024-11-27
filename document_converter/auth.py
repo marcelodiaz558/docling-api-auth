@@ -1,29 +1,23 @@
+from fastapi import Depends, HTTPException, status
+from fastapi.security import APIKeyHeader
+from dotenv import load_dotenv
 import os
-from typing import Optional
-from fastapi import Security, HTTPException, status
-from fastapi.security.api_key import APIKeyHeader
+
+load_dotenv()
 
 API_KEY_NAME = "X-API-Key"
-api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
+API_KEY = os.getenv("API_KEY")
+api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=True)
 
-async def get_api_key(api_key_header: Optional[str] = Security(api_key_header)) -> str:
-    if api_key_header is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="API Key header is missing"
-        )
-    
-    api_key = os.getenv("API_KEY")
-    if not api_key:
+async def get_api_key(api_key_header: str = Depends(api_key_header)):
+    if not API_KEY:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="API Key not configured on server"
+            detail="API Key not configured"
         )
-        
-    if api_key_header != api_key:
+    if not api_key_header == API_KEY:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid API Key"
         )
-        
     return api_key_header 
